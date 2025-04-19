@@ -1,7 +1,7 @@
 import { GrUndo, GrFormCheckmark, GrTrash, GrEdit } from "react-icons/gr";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { RiArrowRightSLine } from "react-icons/ri";
+import { RiArrowRightSLine, RiCloseFill } from "react-icons/ri";
 import { useTodoStore } from "../../store/useStore";
 import { Task } from "../../types/StoreTypes";
 import Modal from "../common/ModalWrapper";
@@ -14,6 +14,7 @@ const Todo = ({ task }: { task: Task }) => {
   const { toggleTaskCompletion, deleteTask } = useTodoStore();
   const [show, setShow] = useState<boolean>(false);
   const [showModal, setShowModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const onToggleOpen = () => setShow((prev) => !prev);
 
@@ -56,6 +57,7 @@ const Todo = ({ task }: { task: Task }) => {
           className={`text-zinc-100 flex-1 ${
             show || task.isCompleted ? "opacity-50" : ""
           }`}
+          onClick={() => setShowDetailsModal(true)}
         >
           <div className="flex items-center gap-2 flex-wrap">
             <h3
@@ -64,9 +66,8 @@ const Todo = ({ task }: { task: Task }) => {
                   ? "line-through text-zinc-500"
                   : "text-zinc-100"
               }`}
-              onClick={() => toggleTaskCompletion(task.id)}
             >
-              {truncateText(task.title, 15)}
+              {truncateText(task.title, 10)}
             </h3>
             <span
               className={`text-xs px-2 py-1 rounded-xl border-2 ${getCategoryColor(
@@ -136,6 +137,8 @@ const Todo = ({ task }: { task: Task }) => {
           />
         </motion.div>
       )}
+
+      {/* Edit Modal */}
       <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
         <TaskForm
           isEdit
@@ -145,6 +148,41 @@ const Todo = ({ task }: { task: Task }) => {
           prevCategory={task.category}
           todoId={task.id}
         />
+      </Modal>
+
+      {/* Details Modal */}
+      <Modal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+      >
+        <div className="flex items-center justify-between text-zinc-100">
+          <h2 className="text-xl font-bold text-center">Task Details</h2>
+          <RiCloseFill
+            size={27}
+            className="cursor-pointer"
+            onClick={() => setShowDetailsModal(false)}
+          />
+        </div>
+        <div className="flex flex-col space-y-2 mt-5">
+          <div className="flex items-center gap-x-3">
+            <h3 className="text-lg font-semibold text-zinc-500">Category:</h3>
+            <p className={`text-lg`}>{task.category}</p>
+          </div>
+
+          <div className="flex items-center gap-x-3">
+            <h3 className="text-lg font-semibold text-zinc-500">Title:</h3>
+            <p className="text-lg">{task.title}</p>
+          </div>
+
+          <div className="flex items-center gap-x-3">
+            <h3 className="text-lg font-semibold text-zinc-500">
+              Description:
+            </h3>
+            <p className="text-lg">
+              {task.description || "No description provided"}
+            </p>
+          </div>
+        </div>
       </Modal>
     </motion.div>
   );

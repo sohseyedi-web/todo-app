@@ -66,7 +66,7 @@ const Todo = ({ task }: { task: Task }) => {
               }`}
               onClick={() => toggleTaskCompletion(task.id)}
             >
-              {task.title}
+              {truncateText(task.title, 15)}
             </h3>
             <span
               className={`text-xs px-2 py-1 rounded-xl border-2 ${getCategoryColor(
